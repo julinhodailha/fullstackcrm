@@ -6,39 +6,44 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
-// --- CONFIGURAÇÃO DE SEGURANÇA (CORS) ---
+// Configurações iniciais
 app.use(express.json());
-app.use(cors()); 
+app.use(cors());
 
+// Cabeçalhos de segurança (CORS)
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
 
-// --- ROTA DE TESTE (Para ver se o site está vivo) ---
+// ROTA PRINCIPAL (O Foguete 🚀)
 app.get('/', (req, res) => {
   res.send('API Gutowski Mailing Online 🚀');
 });
 
-// --- ROTA DE LOGIN ---
+// ROTA DE LOGIN
 app.post('/api/auth/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  // Login fixo para teste inicial (Como está no seu front-end)
-  if (email === 'admin@gutowski.com.br' && password === 'admin123') {
-    return res.json({
-      token: 'token-gerado-pelo-servidor',
-      user: { name: 'Admin Gutowski', email: email }
-    });
+  try {
+    const { email, password } = req.body;
+    
+    // Login Simples para teste
+    if (email === 'admin@gutowski.com.br' && password === 'admin123') {
+      return res.json({
+        token: 'sessao_ativa_gutowski',
+        user: { name: 'Admin Gutowski', email }
+      });
+    }
+    
+    res.status(401).json({ message: 'Credenciais inválidas' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro interno no servidor' });
   }
-
-  res.status(401).json({ message: 'E-mail ou senha incorretos' });
 });
 
-// --- INICIALIZAÇÃO DO SERVIDOR ---
-app.listen(PORT, () => {
+// Ligar o servidor
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
