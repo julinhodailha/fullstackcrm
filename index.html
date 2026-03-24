@@ -1,414 +1,452 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gutowski · Mailing System v2</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:         #0a0a0f;
-  --surface:    #111118;
-  --surface2:   #16161f;
-  --surface3:   #1c1c28;
-  --border:     #1e1e2e;
-  --border2:    #252538;
-  --gold:       #c9a84c;
-  --gold2:      #e8c96a;
-  --gold-dim:   rgba(201,168,76,.12);
-  --gold-glow:  rgba(201,168,76,.05);
-  --text:       #e8e8f0;
-  --text2:      #9090a8;
-  --text3:      #5a5a72;
-  --green:      #22c55e;
-  --green-dim:  rgba(34,197,94,.12);
-  --red:        #ef4444;
-  --red-dim:    rgba(239,68,68,.12);
-  --blue:       #3b82f6;
-  --blue-dim:   rgba(59,130,246,.12);
-  --yellow:     #eab308;
-  --yellow-dim: rgba(234,179,8,.12);
-  --purple:     #a855f7;
-  --purple-dim: rgba(168,85,247,.12);
-  --sc:  #0ea5e9; --sc-dim: rgba(14,165,233,.12);
-  --pr:  #10b981; --pr-dim: rgba(16,185,129,.12);
-  --sp:  #f97316; --sp-dim: rgba(249,115,22,.12);
-  --r:   10px;
-  --font:'Sora',sans-serif;
-  --mono:'DM Mono',monospace;
-  --display:'Cormorant Garamond',serif;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gutowski Mailing - CRM & Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg: #0a0a0c;
+            --card-bg: #141417;
+            --accent: #ffffff;
+            --text-main: #f5f5f7;
+            --text-secondary: #86868b;
+            --border: #2d2d31;
+            --input-bg: #1d1d21;
+        }
 
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
 
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(201,168,76,.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(14,165,233,.03) 0%, transparent 50%);
-}
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
 
-#login-screen{
-  display:flex;align-items:center;justify-content:center;
-  min-height:100vh;position:relative;z-index:1;
-}
-.login-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:52px 46px;
-  width:430px;max-width:93vw;
-  position:relative;
-  box-shadow:0 48px 120px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.03);
-  animation:fadeUp .5s ease both;
-}
-.login-card::before{
-  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-}
-.login-card::after{
-  content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;
-  background:radial-gradient(ellipse 80% 40% at 50% 0%, rgba(201,168,76,.04) 0%, transparent 60%);
-}
+        .btn-primary {
+            background-color: var(--accent);
+            color: black;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
 
-.login-logo{text-align:center;margin-bottom:32px}
-.login-logo .wordmark{
-  font-family:var(--display);
-  font-size:28px;font-weight:600;letter-spacing:.5px;
-  color:var(--text);
-  display:flex;align-items:center;justify-content:center;gap:10px;
-}
-.login-logo .wordmark .sep{color:var(--gold);font-style:normal}
-.login-logo .sub{
-  font-size:10px;font-weight:600;letter-spacing:2px;
-  text-transform:uppercase;color:var(--text3);margin-top:8px;
-}
-.login-logo .ver{
-  display:inline-block;
-  background:var(--gold-dim);border:1px solid rgba(201,168,76,.25);
-  color:var(--gold);font-size:9px;font-weight:700;letter-spacing:1.8px;
-  padding:3px 10px;border-radius:99px;margin-top:10px;
-  text-transform:uppercase;font-family:var(--mono);
-}
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
 
-.greeting{
-  background:var(--gold-glow);
-  border:1px solid rgba(201,168,76,.15);
-  border-radius:10px;
-  padding:13px 18px;
-  font-size:13px;color:rgba(232,201,106,.85);
-  text-align:center;margin-bottom:30px;line-height:1.6;
-  font-style:italic;font-family:var(--display);font-size:15px;
-}
+        .sidebar-item {
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
 
-.form-group{margin-bottom:20px}
-.form-group label{
-  display:block;font-size:9.5px;font-weight:700;letter-spacing:1.5px;
-  text-transform:uppercase;color:var(--text3);margin-bottom:8px;
-}
-.form-group input{
-  width:100%;background:var(--bg);border:1px solid var(--border2);
-  border-radius:9px;padding:13px 16px;
-  font-family:var(--font);font-size:14px;color:var(--text);
-  outline:none;transition:border-color .2s, box-shadow .2s;
-}
-.form-group input:focus{
-  border-color:var(--gold);
-  box-shadow:0 0 0 3px var(--gold-dim);
-}
-.form-group input::placeholder{color:var(--text3)}
+        .sidebar-item.active {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
 
-.btn-login{
-  width:100%;background:var(--gold);color:#06060c;
-  border:none;border-radius:9px;padding:15px;
-  font-family:var(--font);font-size:13.5px;font-weight:700;
-  cursor:pointer;transition:all .2s;margin-top:6px;letter-spacing:.5px;
-  position:relative;overflow:hidden;
-}
-.btn-login::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
-  pointer-events:none;
-}
-.btn-login:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 10px 28px rgba(201,168,76,.3)}
-.btn-login:active{transform:translateY(0)}
-.login-error{
-  background:var(--red-dim);border:1px solid rgba(239,68,68,.25);
-  border-radius:7px;padding:10px 14px;
-  font-size:12.5px;color:var(--red);margin-top:12px;display:none;text-align:center;
-}
+        .sidebar-item:hover {
+            color: var(--accent);
+        }
 
-#app{display:none;min-height:100vh;position:relative;z-index:1}
-.topbar{
-  height:56px;background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;position:sticky;top:0;z-index:200;
-  box-shadow:0 1px 0 var(--border), 0 4px 20px rgba(0,0,0,.3);
-}
-.topbar-brand{display:flex;align-items:center;gap:12px}
-.topbar-brand .wordmark{
-  font-family:var(--display);
-  font-size:18px;font-weight:600;letter-spacing:.3px;color:var(--text);
-  display:flex;align-items:center;gap:8px;
-}
-.topbar-brand .wordmark .sep{color:var(--gold)}
-.topbar-brand .ver{
-  font-size:9px;font-weight:700;color:var(--text3);
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:5px;padding:2px 8px;letter-spacing:1px;
-  text-transform:uppercase;font-family:var(--mono);
-}
-.topbar-right{display:flex;align-items:center;gap:10px}
-.topbar-user{
-  font-size:11.5px;color:var(--text2);
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:7px;padding:5px 14px;
-}
-.btn-logout{
-  background:transparent;border:1px solid var(--border2);
-  border-radius:7px;padding:5px 14px;
-  font-family:var(--font);font-size:11.5px;color:var(--text3);
-  cursor:pointer;transition:all .2s;
-}
-.btn-logout:hover{border-color:var(--red);color:var(--red)}
+        .input-custom {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: white;
+            transition: border-color 0.3s;
+        }
 
-.nav{
-  display:flex;gap:0;background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:0 24px;overflow-x:auto;
-}
-.nav-tab{
-  padding:15px 20px;font-size:12.5px;font-weight:500;color:var(--text3);
-  cursor:pointer;border:none;background:transparent;
-  font-family:var(--font);border-bottom:2px solid transparent;
-  transition:all .2s;white-space:nowrap;letter-spacing:.1px;
-}
-.nav-tab:hover{color:var(--text2)}
-.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+        .input-custom:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
 
-.main{max-width:1400px;margin:0 auto;padding:32px 28px}
+        /* Animação de entrada */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
 
-.state-bar{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
-.state-btn{
-  display:flex;align-items:center;gap:8px;padding:9px 18px;
-  border-radius:9px;border:1px solid var(--border2);background:var(--surface);
-  font-family:var(--font);font-size:12.5px;font-weight:600;
-  cursor:pointer;transition:all .2s;color:var(--text2);
-}
-.state-btn .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.state-btn.sc .dot{background:var(--sc)}
-.state-btn.pr .dot{background:var(--pr)}
-.state-btn.sp .dot{background:var(--sp)}
-.state-btn.all .dot{background:linear-gradient(135deg,var(--sc),var(--pr))}
-.state-btn:hover{border-color:var(--gold);color:var(--text)}
-.state-btn.active.sc{background:var(--sc-dim);border-color:rgba(14,165,233,.35);color:var(--sc)}
-.state-btn.active.pr{background:var(--pr-dim);border-color:rgba(16,185,129,.35);color:var(--pr)}
-.state-btn.active.sp{background:var(--sp-dim);border-color:rgba(249,115,22,.35);color:var(--sp)}
-.state-btn.active.all{background:var(--gold-dim);border-color:rgba(201,168,76,.3);color:var(--gold)}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.section{display:none}.section.active{display:block}
-.section-header{margin-bottom:24px}
-.section-header h2{
-  font-size:20px;font-weight:600;letter-spacing:-.4px;margin-bottom:5px;
-  background:linear-gradient(135deg, var(--text) 60%, var(--gold) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  display:inline-block;
-}
-.section-header p{font-size:13px;color:var(--text2)}
+        #login-screen {
+            background: radial-gradient(circle at center, #1a1a1f 0%, #0a0a0c 100%);
+        }
 
-.upload-zone{
-  border:2px dashed var(--border2);border-radius:14px;
-  padding:52px 32px;text-align:center;cursor:pointer;
-  transition:all .25s;background:var(--surface);
-  position:relative;overflow:hidden;
-}
-.upload-zone:hover,.upload-zone.drag-over{
-  border-color:var(--gold);
-  background:linear-gradient(180deg, var(--surface) 0%, rgba(201,168,76,.04) 100%);
-}
-.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-icon{font-size:40px;margin-bottom:12px;display:block}
-
-.files-list{margin-top:16px;display:flex;flex-direction:column;gap:8px}
-.file-item{
-  background:var(--surface);border:1px solid var(--border);border-radius:9px;
-  padding:12px 18px;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;
-}
-
-.btn-process{
-  background:var(--gold);color:#06060c;border:none;border-radius:9px;
-  padding:12px 28px;font-family:var(--font);font-size:13.5px;font-weight:700;
-  cursor:pointer;transition:all .2s;margin-top:20px;
-}
-.btn-process:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.25)}
-
-.stats-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:14px;margin-bottom:28px;
-}
-.stat-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:20px 22px;position:relative;overflow:hidden;
-  animation:fadeUp .4s ease both;
-}
-
-.table-wrapper{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;
-}
-table{width:100%;border-collapse:collapse}
-th{padding:11px 16px;font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;text-align:left;background:var(--surface2)}
-td{padding:11px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text2)}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-</style>
+        .stat-card {
+            border-left: 2px solid var(--border);
+        }
+        
+        .stat-card:hover {
+            border-left-color: var(--accent);
+        }
+    </style>
 </head>
 <body>
 
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="wordmark">Gutowski <span class="sep">·</span> Mailing</div>
-      <div class="sub">Cobrança Garantida</div>
-      <div class="ver">v2.0 · Multi-Estado</div>
-    </div>
-    <div class="greeting" id="greeting-text">Seja bem-vinda ao seu painel administrativo.</div>
-    <div class="form-group">
-      <label>E-mail</label>
-      <input type="email" id="login-email" placeholder="admin@gutowski.com.br" autocomplete="email">
-    </div>
-    <div class="form-group">
-      <label>Senha</label>
-      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn-login" onclick="doLogin()">Entrar no Sistema</button>
-    <div class="login-error" id="login-error">Credenciais inválidas. Tente novamente.</div>
-  </div>
-</div>
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md p-8 fade-in">
+            <div class="text-center mb-10">
+                <div class="inline-block p-4 bg-white rounded-2xl mb-6">
+                    <i class="fa-solid fa-bolt-lightning text-3xl text-black"></i>
+                </div>
+                <h1 class="text-3xl font-bold tracking-tight">Gutowski Mailing</h1>
+                <p class="text-gray-500 mt-2">Acesse sua central de inteligência</p>
+            </div>
 
-<div id="app">
-  <div class="topbar">
-    <div class="topbar-brand">
-      <div class="wordmark">Gutowski <span class="sep">·</span> Mailing System</div>
-      <div class="ver">v2 · SC / PR / SP</div>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-user" id="user-label">Admin</div>
-      <button class="btn-logout" onclick="doLogout()">Sair</button>
-    </div>
-  </div>
-
-  <div class="nav">
-    <button class="nav-tab active" onclick="switchNav('import',this)">📥 Importar</button>
-    <button class="nav-tab" onclick="switchNav('dashboard',this)">📊 Dashboard</button>
-    <button class="nav-tab" onclick="switchNav('contacts',this)">📋 Contatos</button>
-  </div>
-
-  <div class="main">
-    <div id="nav-import" class="section active">
-      <div class="section-header">
-        <h2>Importar Mailing</h2>
-        <p>Envie arquivos CSV ou TXT e o sistema fará a higienização automática.</p>
-      </div>
-      <div class="upload-zone" id="upload-zone">
-        <input type="file" id="file-input" multiple accept=".csv,.txt">
-        <span class="upload-icon">📂</span>
-        <h3>Clique para selecionar arquivos</h3>
-      </div>
-      <button class="btn-process" id="btn-process">⚡ Processar e Higienizar</button>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-400">E-mail</label>
+                    <input type="email" id="email" required placeholder="admin@gutowski.com.br"
+                        class="w-full p-4 rounded-xl input-custom">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-400">Senha</label>
+                    <input type="password" id="password" required placeholder="••••••••"
+                        class="w-full p-4 rounded-xl input-custom">
+                </div>
+                <button type="submit" class="w-full p-4 rounded-xl btn-primary mt-4 flex items-center justify-center gap-2">
+                    <span>Entrar no Sistema</span>
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </form>
+            
+            <div id="login-error" class="hidden mt-4 p-4 bg-red-900/20 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">
+                Credenciais inválidas. Tente novamente.
+            </div>
+        </div>
     </div>
 
-    <div id="nav-dashboard" class="section">
-      <div class="section-header"><h2>Estatísticas Gerais</h2></div>
-      <div class="stats-grid">
-        <div class="stat-card">Total de Contatos: 0</div>
-        <div class="stat-card">Válidos: 0</div>
-      </div>
-    </div>
-
-    <div id="nav-contacts" class="section">
-      <div class="table-wrapper">
-        <table>
-          <thead><tr><th>Nome</th><th>Cidade</th><th>Telefone</th><th>Status</th></tr></thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  // URL DA SUA API NO RAILWAY
-  const API_URL = 'https://api.gutowskicobrancagarantida.com.br';
-
-  // FUNÇÃO DE LOGIN
-  async function doLogin() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-pass').value;
-    const errorDiv = document.getElementById('login-error');
-
-    if (!email || !password) {
-      errorDiv.innerText = "Preencha todos os campos.";
-      errorDiv.style.display = 'block';
-      return;
-    }
-
-    try {
-      errorDiv.style.display = 'none';
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+    <div id="app-content" class="hidden min-h-screen flex">
         
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('user-label').innerText = data.user.name;
-      } else {
-        errorDiv.innerText = data.message || "Credenciais inválidas.";
-        errorDiv.style.display = 'block';
-      }
-    } catch (err) {
-      errorDiv.innerText = "Erro de conexão. Verifique se o backend está ativo.";
-      errorDiv.style.display = 'block';
-    }
-  }
+        <aside class="w-72 border-r border-[#2d2d31] flex flex-col p-6 fixed h-full bg-[#0a0a0c]">
+            <div class="flex items-center gap-3 mb-12 px-2">
+                <i class="fa-solid fa-bolt-lightning text-xl"></i>
+                <span class="font-bold text-xl tracking-tight">Gutowski</span>
+            </div>
 
-  // TROCAR ABAS
-  function switchNav(sectionId, btn) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-    document.getElementById('nav-' + sectionId).classList.add('active');
-    btn.classList.add('active');
-  }
+            <nav class="space-y-2 flex-1">
+                <div class="sidebar-item active p-3 flex items-center gap-3" onclick="switchTab('dashboard')">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span class="font-medium">Dashboard</span>
+                </div>
+                <div class="sidebar-item p-3 flex items-center gap-3" onclick="switchTab('leads')">
+                    <i class="fa-solid fa-address-book w-5"></i>
+                    <span class="font-medium">Mailing / Contatos</span>
+                </div>
+                <div class="sidebar-item p-3 flex items-center gap-3" onclick="switchTab('import')">
+                    <i class="fa-solid fa-cloud-arrow-up w-5"></i>
+                    <span class="font-medium">Importar Dados</span>
+                </div>
+                <div class="sidebar-item p-3 flex items-center gap-3" onclick="switchTab('reports')">
+                    <i class="fa-solid fa-file-invoice w-5"></i>
+                    <span class="font-medium">Relatórios</span>
+                </div>
+            </nav>
 
-  // LOGOUT
-  function doLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.reload();
-  }
+            <div class="mt-auto pt-6 border-t border-[#2d2d31]">
+                <div class="flex items-center gap-3 px-2 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-500 flex items-center justify-center text-xs font-bold">AG</div>
+                    <div>
+                        <p class="text-sm font-semibold" id="user-name">Admin Gutowski</p>
+                        <p class="text-xs text-gray-500">Diretor Criativo</p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="w-full p-3 rounded-lg border border-[#2d2d31] text-sm font-medium hover:bg-white hover:text-black transition-colors">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>Sair
+                </button>
+            </div>
+        </aside>
 
-  // Verificar se já está logado ao carregar
-  window.onload = () => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      document.getElementById('user-label').innerText = JSON.parse(user).name;
-    }
-  };
-</script>
+        <main class="flex-1 ml-72 p-10 bg-[#0a0a0c]">
+            
+            <section id="tab-dashboard" class="tab-content space-y-10">
+                <header class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-bold tracking-tight">Dashboard Executivo</h2>
+                        <p class="text-gray-500 mt-1">Visão geral do mailing e performance.</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-gray-400">Sincronizado há 2 min</p>
+                        <p class="text-xs text-green-500 flex items-center justify-end gap-1">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Sistema Online
+                        </p>
+                    </div>
+                </header>
 
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 stat-card transition-all">
+                        <p class="text-sm font-medium text-gray-400 mb-1">Total de Leads</p>
+                        <h3 class="text-3xl font-bold tracking-tight">12.840</h3>
+                        <p class="text-xs text-green-500 mt-2 font-medium">+14% vs mês passado</p>
+                    </div>
+                    <div class="glass-card p-6 stat-card transition-all">
+                        <p class="text-sm font-medium text-gray-400 mb-1">Síndicos / Condomínios</p>
+                        <h3 class="text-3xl font-bold tracking-tight">4.201</h3>
+                        <p class="text-xs text-gray-500 mt-2 font-medium">Extraídos via Maps</p>
+                    </div>
+                    <div class="glass-card p-6 stat-card transition-all">
+                        <p class="text-sm font-medium text-gray-400 mb-1">Convertidos</p>
+                        <h3 class="text-3xl font-bold tracking-tight">854</h3>
+                        <p class="text-xs text-green-500 mt-2 font-medium">Taxa de 6.7%</p>
+                    </div>
+                    <div class="glass-card p-6 stat-card transition-all">
+                        <p class="text-sm font-medium text-gray-400 mb-1">Aguardando Contato</p>
+                        <h3 class="text-3xl font-bold tracking-tight">2.115</h3>
+                        <p class="text-xs text-yellow-500 mt-2 font-medium">Alta Prioridade</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card p-8 md:col-span-2">
+                        <h4 class="font-semibold mb-8 text-lg">Crescimento da Base de Dados</h4>
+                        <canvas id="growthChart" height="280"></canvas>
+                    </div>
+                    <div class="glass-card p-8">
+                        <h4 class="font-semibold mb-6 text-lg">Últimas Atividades</h4>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-2 h-12 rounded-full bg-blue-500/20 flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Importação Concluída</p>
+                                    <p class="text-xs text-gray-500">840 novos leads de "Pinheiros - SP"</p>
+                                    <p class="text-[10px] text-gray-600 mt-1 uppercase tracking-widest">há 45 min</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-2 h-12 rounded-full bg-green-500/20 flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Backup Gerado</p>
+                                    <p class="text-xs text-gray-500">Cloud Sync: Database Healthy</p>
+                                    <p class="text-[10px] text-gray-600 mt-1 uppercase tracking-widest">ontem às 22:00</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-2 h-12 rounded-full bg-purple-500/20 flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Novo Admin Adicionado</p>
+                                    <p class="text-xs text-gray-500">Permissão nível 2: Comercial</p>
+                                    <p class="text-[10px] text-gray-600 mt-1 uppercase tracking-widest">3 dias atrás</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-leads" class="tab-content hidden space-y-10">
+                <header class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold tracking-tight">Base de Mailing</h2>
+                        <p class="text-gray-500 mt-1">Gerenciamento centralizado de condomínios.</p>
+                    </div>
+                    <button class="btn-primary py-3 px-6 rounded-lg flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Novo Contato
+                    </button>
+                </header>
+
+                <div class="glass-card overflow-hidden">
+                    <div class="p-6 border-b border-[#2d2d31] flex gap-4">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                            <input type="text" placeholder="Buscar por nome, bairro ou síndico..." 
+                                class="w-full pl-12 pr-4 py-3 rounded-lg input-custom text-sm">
+                        </div>
+                        <select class="input-custom px-4 py-3 rounded-lg text-sm">
+                            <option>Todos os Status</option>
+                            <option>Pendente</option>
+                            <option>Convertido</option>
+                        </select>
+                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="bg-[#1d1d21]/50 text-gray-400 uppercase text-[10px] tracking-widest">
+                                <th class="p-6 font-semibold">Condomínio</th>
+                                <th class="p-6 font-semibold">Responsável / Síndico</th>
+                                <th class="p-6 font-semibold">Região</th>
+                                <th class="p-6 font-semibold">Status</th>
+                                <th class="p-6 font-semibold text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#2d2d31]" id="leads-table-body">
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-6">
+                                    <p class="font-medium">Edifício Grand Horizon</p>
+                                    <p class="text-xs text-gray-500">Av. Paulista, 1000</p>
+                                </td>
+                                <td class="p-6">Ricardo Mendonça</td>
+                                <td class="p-6">São Paulo / SP</td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 bg-green-900/30 text-green-400 rounded-full text-[10px] font-bold uppercase tracking-wider">Ativo</span>
+                                </td>
+                                <td class="p-6 text-right">
+                                    <button class="text-gray-500 hover:text-white p-2"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="text-gray-500 hover:text-white p-2 ml-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-6">
+                                    <p class="font-medium">Condomínio Solar das Artes</p>
+                                    <p class="text-xs text-gray-500">Rua Augusta, 450</p>
+                                </td>
+                                <td class="p-6">Ana Beatriz Lima</td>
+                                <td class="p-6">Curitiba / PR</td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 bg-yellow-900/30 text-yellow-400 rounded-full text-[10px] font-bold uppercase tracking-wider">Em Negociação</span>
+                                </td>
+                                <td class="p-6 text-right">
+                                    <button class="text-gray-500 hover:text-white p-2"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="text-gray-500 hover:text-white p-2 ml-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="tab-import" class="tab-content hidden space-y-10">
+                <header>
+                    <h2 class="text-3xl font-bold tracking-tight">Importar Base de Dados</h2>
+                    <p class="text-gray-500 mt-1">Carregue arquivos CSV ou Excel extraídos do Google Maps.</p>
+                </header>
+
+                <div class="glass-card p-12 flex flex-col items-center justify-center text-center border-dashed border-2 border-gray-700">
+                    <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-file-csv text-4xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Arraste sua planilha aqui</h3>
+                    <p class="text-gray-500 text-sm mb-8 max-w-xs">Suportamos arquivos .csv, .xlsx e .json formatados para CRM.</p>
+                    <button class="btn-primary px-8 py-4 rounded-xl flex items-center gap-3">
+                        <i class="fa-solid fa-folder-open"></i> Selecionar Arquivo
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO DA API - ALTERADO PARA O URL DO RAILWAY
+        const API_URL = 'https://api.gutowskicobrancagarantida.com.br';
+
+        // LÓGICA DE LOGIN
+        const loginForm = document.getElementById('login-form');
+        const loginScreen = document.getElementById('login-screen');
+        const appContent = document.getElementById('app-content');
+        const loginError = document.getElementById('login-error');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Rota corrigida com / final para evitar problemas de redirect
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userName', data.user.name);
+                    showDashboard(data.user);
+                } else {
+                    loginError.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error('Erro na requisição:', err);
+                alert('Erro de conexão com o servidor. Verifique se a API está online.');
+            }
+        });
+
+        function showDashboard(user) {
+            loginScreen.classList.add('hidden');
+            appContent.classList.remove('hidden');
+            document.getElementById('user-name').innerText = user.name;
+            initChart();
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
+        // TROCA DE ABAS
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+        }
+
+        // GRÁFICO (Simulação)
+        function initChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                    datasets: [{
+                        label: 'Leads Adicionados',
+                        data: [3200, 5400, 8100, 9500, 11200, 12840],
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        pointBackgroundColor: '#ffffff',
+                        fill: true,
+                        backgroundColor: (context) => {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+                            return gradient;
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#86868b' } },
+                        x: { grid: { display: false }, ticks: { color: '#86868b' } }
+                    }
+                }
+            });
+        }
+
+        // Verificar sessão ao carregar
+        window.onload = () => {
+            const token = localStorage.getItem('token');
+            const name = localStorage.getItem('userName');
+            if (token && name) {
+                showDashboard({ name });
+            }
+        }
+    </script>
 </body>
 </html>
