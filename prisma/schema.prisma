@@ -1,0 +1,44 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  name      String    @default("")
+  role      String    @default("user") // "admin" | "user"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  contacts  Contact[]
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  nome      String   @default("")
+  telefone  String   @default("")
+  email     String   @default("")
+  cidade    String   @default("")
+  estado    String   @default("")
+  tipo      String   @default("")
+  fonte     String   @default("")
+  obs       String   @default("")
+  origem    String   @default("")
+  score     Int      @default(0)
+  status    String   @default("valido")
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([estado])
+  @@index([status])
+  @@index([telefone])
+}
