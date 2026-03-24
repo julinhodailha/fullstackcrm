@@ -4,22 +4,20 @@ const { PrismaClient } = require('@prisma/client');
 
 const app = express();
 const prisma = new PrismaClient();
-const PORT = process.env.PORT || 3000;
 
-// Configurações iniciais
+// Configuração de Porta Dinâmica para o Railway
+const PORT = process.env.PORT || 8080;
+
+// Configuração de CORS para permitir que o seu Front-end acesse a API
+app.use(cors({
+  origin: '*', 
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
-app.use(cors());
 
-// Cabeçalhos de segurança (CORS)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
-  next();
-});
-
-// ROTA PRINCIPAL (O Foguete 🚀)
+// Rota de Teste (O Foguete 🚀)
 app.get('/', (req, res) => {
   res.send('API Gutowski Mailing Online 🚀');
 });
@@ -29,21 +27,22 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // Login Simples para teste
+    // Login Simples para validação
     if (email === 'admin@gutowski.com.br' && password === 'admin123') {
       return res.json({
         token: 'sessao_ativa_gutowski',
-        user: { name: 'Admin Gutowski', email }
+        user: { name: 'Admin Gutowski', email: email }
       });
     }
     
     res.status(401).json({ message: 'Credenciais inválidas' });
   } catch (error) {
+    console.error('Erro no login:', error);
     res.status(500).json({ message: 'Erro interno no servidor' });
   }
 });
 
-// Ligar o servidor
+// INICIALIZAÇÃO DO SERVIDOR (O Pulo do Gato para o Railway)
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando com sucesso na porta ${PORT} 🚀`);
 });

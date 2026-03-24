@@ -1,16 +1,15 @@
 {
   "name": "gutowski-mailing-backend",
   "version": "1.0.0",
-  "description": "Sistema de Mailing Gutowski",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "prisma generate"
+    "build": "npm install && npx prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.2",
-    "cors": "^2.8.5",
     "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "@prisma/client": "^6.19.2",
     "prisma": "^6.19.2"
   }
 }
